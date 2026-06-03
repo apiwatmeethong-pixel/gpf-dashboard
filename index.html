@@ -176,12 +176,35 @@
         if(pageId === 'gold' && goldDataRaw.length > 0) drawGoldDashboard();
         if(pageId === 'reit' && reitDataRaw.length > 0) drawReitDashboard();
       }
-
+// เอา URL ที่ได้จากขั้นตอนที่ 1 มาใส่ตรงนี้
+      const API_URL = "https://script.google.com/macros/s/AKfycbwK791xZg6NEhcRwaUwmlcj4-iCvTzBr3A7TxfSvluzuU2cszzkWAOXOdyiAyVGriu4UQ/exec";
+      
       function fetchData() {
-        google.script.run.withSuccessHandler(processData).withFailureHandler(err => console.error(err)).getNavData();
-        google.script.run.withSuccessHandler(processThaiStockData).withFailureHandler(err => console.error(err)).getThaiStockData();
-        google.script.run.withSuccessHandler(processGoldData).withFailureHandler(err => console.error(err)).getGoldData();
-        google.script.run.withSuccessHandler(processReitData).withFailureHandler(err => console.error(err)).getReitData();
+        // ใช้ fetch() แทน google.script.run()
+        
+        // 1. ดึงข้อมูลพอร์ต
+        fetch(API_URL + "?action=getNavData")
+          .then(response => response.json())
+          .then(data => processData(data))
+          .catch(err => console.error("พอร์ต Error:", err));
+
+        // 2. ดึงข้อมูลหุ้นไทย
+        fetch(API_URL + "?action=getThaiStockData")
+          .then(response => response.json())
+          .then(data => processThaiStockData(data))
+          .catch(err => console.error("หุ้นไทย Error:", err));
+
+        // 3. ดึงข้อมูลทองคำ
+        fetch(API_URL + "?action=getGoldData")
+          .then(response => response.json())
+          .then(data => processGoldData(data))
+          .catch(err => console.error("ทองคำ Error:", err));
+
+        // 4. ดึงข้อมูลอสังหาฯ
+        fetch(API_URL + "?action=getReitData")
+          .then(response => response.json())
+          .then(data => processReitData(data))
+          .catch(err => console.error("อสังหา Error:", err));
       }
 
       // ========================== 1. พอร์ตรวม & รายวัน ==========================
